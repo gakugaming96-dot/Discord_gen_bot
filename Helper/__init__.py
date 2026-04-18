@@ -1,6 +1,5 @@
-__title__ = 'Nexus Gen Bot'
-__author__ = 'Vatos'
-__copyright__ = 'discord.gg/nexustools'
+__title__ = 'GG Gen Bot'
+__author__ = 'killarua'
 __version__ = '1.0.0'
 
 from Helper.utils import *

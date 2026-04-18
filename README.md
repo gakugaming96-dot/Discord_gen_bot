@@ -78,4 +78,3 @@ Developed by **killarua**.
 
 
 please support this project ethereum 0x9ac32db4d91e0241ca300c24e6752a5df7a406a9
-# Discord_gen_bot
