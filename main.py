@@ -10,8 +10,12 @@ from colorama import Fore
 from Helper import *
 
 # --- 1. LOAD CONFIGURATION ---
-with open('config.json', 'r') as f:
-    config = json.load(f)
+try:
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+except FileNotFoundError:
+    print("Error: config.json not found!")
+    sys.exit()
 
 # Environment Variables & Config setup
 TOKEN = os.getenv("BOT_TOKEN") or config.get("token")
@@ -68,7 +72,7 @@ def save_ticket(ticket_code, service):
 async def on_ready():
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f'{Fore.LIGHTMAGENTA_EX}Logged in as {bot.user}')
-    print("Prefixes: F., B., V., D., M.")
+    print("Prefixes active: F., B., V., D., M.")
     
     # Send instructions to channels
     embed_configs = [
@@ -84,6 +88,7 @@ async def on_ready():
             except: pass
             embed = discord.Embed(title=f"How to use {title}:", color=0xf43f5e)
             embed.description = f"Commands: `{cmd}`\n\nCooldown: {cd} seconds.\n\nTicket system active."
+            embed.set_footer(text="Redeem tickets using F.redeem [code]")
             await ch.send(embed=embed)
 
 @bot.event
@@ -101,7 +106,6 @@ async def on_presence_update(before, after):
 
 # --- 5. COMMANDS ---
 
-# M.help
 @bot.command(name="help")
 async def help_cmd(ctx):
     embed = discord.Embed(title="Nexus Commands", color=0xba67f6)
@@ -111,44 +115,43 @@ async def help_cmd(ctx):
     embed.add_field(name="D. (Admin)", value="`D.restart`", inline=False)
     await ctx.send(embed=embed)
 
-# D.restart
 @bot.command(name="restart")
 async def restart(ctx):
     if ctx.prefix == "D." and ctx.author.id == OWNER_ID:
-        await ctx.send("♻️ Restarting...")
+        await ctx.send("♻️ Restarting system...")
         os.execv(sys.executable, ['python'] + sys.argv)
 
-# Generator Logic (Unified)
 @bot.command(name="gen")
+@commands.cooldown(1, 30, commands.BucketType.user) # Default safety cooldown
 async def combined_gen(ctx, service: str = None):
     if not service: return await ctx.send(f"Usage: `{ctx.prefix}gen [service]`")
     
     # VIP Check
     if ctx.prefix == "V.":
         role = ctx.guild.get_role(premium_gen_role)
-        if role not in ctx.author.roles:
-            return await ctx.send(embed=discord.Embed(title="VIP Required", description="Price: $5 or 200 Ruby", color=0xf43f5e))
+        if not role or role not in ctx.author.roles:
+            embed = discord.Embed(title="VIP Required", description="Price: $5 or 200 Ruby", color=0xf43f5e)
+            return await ctx.send(embed=embed)
     
     # Booster Check
     elif ctx.prefix == "B.":
         role = ctx.guild.get_role(boost_gen_role)
-        if role not in ctx.author.roles: return await ctx.send("Booster role required!")
+        if not role or role not in ctx.author.roles: return await ctx.send("Booster role required!")
     
     # Free Check
     elif ctx.prefix == "F.":
         if ctx.channel.id != free_gen_channel_id: return
         role = ctx.guild.get_role(free_gen_role)
-        if role not in ctx.author.roles: return await ctx.send("Status required!")
+        if not role or role not in ctx.author.roles: return await ctx.send("Status required!")
 
     ticket = generate_ticket()
     save_ticket(ticket, service)
     try:
         await ctx.author.send(f"🎟️ Your **{service}** ticket: `{ticket}`\nRedeem with `F.redeem {ticket}`")
-        await ctx.send("✅ Ticket sent to DMs!")
+        await ctx.send("✅ Ticket sent to DMs!", delete_after=10)
     except:
-        await ctx.send("❌ Open your DMs!")
+        await ctx.send("❌ Please open your DMs to receive the ticket!")
 
-# F.redeem
 @bot.command(name="redeem")
 async def redeem(ctx, code: str):
     if ctx.prefix != "F.": return
@@ -164,13 +167,16 @@ async def redeem(ctx, code: str):
         with open("assets/tickets.txt", "w") as f:
             for line in lines:
                 if line.startswith(code) and not found:
-                    service_name = line.split(":")[1].strip()
-                    found = True
+                    try:
+                        service_name = line.split(":")[1].strip()
+                        found = True
+                    except IndexError:
+                        continue
                 else:
                     f.write(line)
                     
     if found:
-        # Use premium folder as default for stock search
+        # Stock location
         stock_file = Path(f"Premium_gen/{service_name}.txt")
         if stock_file.exists():
             with open(stock_file, "r") as f:
@@ -180,25 +186,26 @@ async def redeem(ctx, code: str):
                 remaining = [a for a in accounts if a.strip() != acc]
                 with open(stock_file, "w") as f:
                     f.writelines(remaining)
-                await ctx.author.send(f"🎁 Reward: `{acc}`")
-                return await ctx.send("✅ Redeemed in DMs!")
-        await ctx.send("❌ Valid ticket, but out of stock!")
+                try:
+                    await ctx.author.send(f"🎁 **{service_name} Account:** `{acc}`")
+                    return await ctx.send("✅ Redeemed! Check your DMs.")
+                except:
+                    return await ctx.send("❌ I couldn't DM you your account!")
+        await ctx.send(f"❌ Valid ticket, but **{service_name}** is out of stock!")
     else:
-        await ctx.send("❌ Invalid ticket.")
+        await ctx.send("❌ Invalid or expired ticket.")
 
-# Slash Command: Set Ticket
-@bot.slash_command(name="setticket", description="Manually create a ticket", guild_ids=[GUILD_ID])
+@bot.slash_command(name="setticket", description="Manually create a ticket for a service", guild_ids=[GUILD_ID])
 async def setticket(ctx, service: str):
-    if not await Utils.isWhitelisted(ctx): return await ctx.respond("Unauthorized.")
+    if not await Utils.isWhitelisted(ctx): return await ctx.respond("Unauthorized.", ephemeral=True)
     ticket = generate_ticket()
     save_ticket(ticket, service)
-    await ctx.respond(f"✅ Ticket for {service}: `{ticket}`", ephemeral=True)
+    await ctx.respond(f"✅ Ticket for **{service}**: `{ticket}`", ephemeral=True)
 
-# Cooldown Handler
 @combined_gen.error
 async def gen_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send(f"⏳ Wait {round(error.retry_after, 2)}s.")
+        await ctx.send(f"⏳ Cooldown! Wait {round(error.retry_after, 2)}s.", delete_after=5)
 
 if TOKEN:
     bot.run(TOKEN)
