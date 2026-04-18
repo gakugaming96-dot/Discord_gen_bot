@@ -13,12 +13,12 @@ from Helper import *
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-# Environment Variables (For Railway Security)
-TOKEN = os.getenv("BOT_TOKEN")
+# Environment Variables & Config setup
+TOKEN = os.getenv("BOT_TOKEN") or config.get("token")
 OWNER_ID = int(os.getenv("OWNER_ID", config.get("owner_id", 0)))
 GUILD_ID = int(os.getenv("SERVER_ID", config.get("server_id", 0)))
 
-# Extracting data from Config.json
+# Extracting data
 free_gen_role = config["free_gen"]["free_gen_role"]
 free_gen_channel_id = config["free_gen"]["free_gen_channel"]
 free_gen_cooldown = config["free_gen"]["free_gen_cooldown"]
@@ -46,191 +46,159 @@ intents.members = True
 intents.presences = True
 intents.message_content = True 
 
-bot = commands.Bot(command_prefix="F.", activity=activity, status=discord.Status.online, intents=intents)
-bot.remove_command('help')
+bot = commands.Bot(
+    command_prefix=["F.", "B.", "V.", "D.", "C.", "M."], 
+    activity=activity, 
+    status=discord.Status.online, 
+    intents=intents,
+    help_command=None
+)
 
+# --- 3. HELPERS ---
 def generate_ticket():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=9))
 
-# --- 3. EVENTS ---
+def save_ticket(ticket_code, service):
+    Path("assets").mkdir(exist_ok=True)
+    with open("assets/tickets.txt", "a") as f:
+        f.write(f"{ticket_code}:{service}\n")
 
+# --- 4. EVENTS ---
 @bot.event
 async def on_ready():
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f'{Fore.LIGHTMAGENTA_EX}Logged in as {bot.user}')
+    print("Prefixes: F., B., V., D., M.")
     
-    # Clear channels and send instructions
-    channel_ids = [free_gen_channel_id, boost_gen_channel_id, premium_gen_channel_id]
-    for channel_id in channel_ids:
-        channel = bot.get_channel(channel_id)
-        if channel:
-            try:
-                await channel.purge(limit=100)
-            except:
-                pass
-
-    # Instruction Embeds
+    # Send instructions to channels
     embed_configs = [
-        (free_gen_channel_id, "Free gen", "F.gen [service]", free_gen_cooldown, "killarua"),
-        (boost_gen_channel_id, "Booster gen", "B.[service]", boost_gen_cooldown, "killarua"),
-        (premium_gen_channel_id, "Premium gen", "V.[service]", premium_gen_cooldown, "killa")
+        (free_gen_channel_id, "Free gen", "F.gen [service]", free_gen_cooldown),
+        (boost_gen_channel_id, "Booster gen", "B.gen [service]", boost_gen_cooldown),
+        (premium_gen_channel_id, "Premium gen", "V.gen [service]", premium_gen_cooldown)
     ]
 
-    for ch_id, title, cmd, cd, author in embed_configs:
+    for ch_id, title, cmd, cd in embed_configs:
         ch = bot.get_channel(ch_id)
         if ch:
+            try: await ch.purge(limit=5)
+            except: pass
             embed = discord.Embed(title=f"How to use {title}:", color=0xf43f5e)
-            embed.description = (
-                f"Commands:\n\n`{cmd}`\n\n"
-                f"Settings:\n\nYou need to allow Direct Messages from server members to use this bot.\n\n"
-                f"Cooldown:\n\nThe cooldown is {cd} seconds.\n"
-            )
-            embed.set_footer(text=f"Made by {author}")
+            embed.description = f"Commands: `{cmd}`\n\nCooldown: {cd} seconds.\n\nTicket system active."
             await ch.send(embed=embed)
-
-@bot.event
-async def on_message(message):
-    if message.author.bot: return
-    
-    # Prefix Interceptor (Routing B., V., and D. to F.)
-    content = message.content.upper()
-    if content.startswith("B."):
-        message.content = "F.bgen " + message.content[2:]
-    elif content.startswith("V."):
-        message.content = "F.vgen " + message.content[2:]
-    elif content.startswith("D.RESTART"):
-        message.content = "F.restart"
-        
-    await bot.process_commands(message)
 
 @bot.event
 async def on_presence_update(before, after):
     if after.bot or not after.guild: return
     role = after.guild.get_role(free_gen_role)
-    channel = bot.get_channel(status_logs)
     if not role: return
 
-    had_status = any(isinstance(a, discord.CustomActivity) and str(a) == free_gen_status for a in before.activities)
     has_status = any(isinstance(a, discord.CustomActivity) and str(a) == free_gen_status for a in after.activities)
-
-    if had_status and not has_status:
-        await after.remove_roles(role)
-        if channel:
-            embed = discord.Embed(title="Removed Free Gen", description=f"{after.mention} removed the status.", color=discord.Color.red())
-            await channel.send(embed=embed)
-    elif not had_status and has_status:
+    
+    if has_status:
         await after.add_roles(role)
-        if channel:
-            embed = discord.Embed(title="Added Free Gen", description=f"{after.mention} added the status!", color=discord.Color.green())
-            await channel.send(embed=embed)
+    else:
+        await after.remove_roles(role)
 
-# --- 4. ADMIN COMMANDS ---
+# --- 5. COMMANDS ---
 
-@bot.command()
+# M.help
+@bot.command(name="help")
+async def help_cmd(ctx):
+    embed = discord.Embed(title="Nexus Commands", color=0xba67f6)
+    embed.add_field(name="F. (General)", value="`F.redeem [code]`\n`F.gen [service]`\n`F.stock`", inline=False)
+    embed.add_field(name="B. (Booster)", value="`B.gen [service]`", inline=False)
+    embed.add_field(name="V. (VIP)", value="`V.gen [service]`", inline=False)
+    embed.add_field(name="D. (Admin)", value="`D.restart`", inline=False)
+    await ctx.send(embed=embed)
+
+# D.restart
+@bot.command(name="restart")
 async def restart(ctx):
-    if ctx.author.id == OWNER_ID:
-        await ctx.send("♻️ Restarting the system...")
+    if ctx.prefix == "D." and ctx.author.id == OWNER_ID:
+        await ctx.send("♻️ Restarting...")
         os.execv(sys.executable, ['python'] + sys.argv)
 
-@bot.command()
-async def whitelist(ctx, user: discord.Member = None):
-    if ctx.author.id != OWNER_ID:
-        return await ctx.send(embed=discord.Embed(title="Error", description="Owner only command.", color=0xf667c6))
-    if not user: return await ctx.send("Please mention a user.")
+# Generator Logic (Unified)
+@bot.command(name="gen")
+async def combined_gen(ctx, service: str = None):
+    if not service: return await ctx.send(f"Usage: `{ctx.prefix}gen [service]`")
     
-    Path("assets").mkdir(exist_ok=True)
-    with open("assets/whitelist.txt", "a+") as f:
-        f.seek(0)
-        whitelisted = f.read().splitlines()
-        if str(user.id) not in whitelisted:
-            f.write(str(user.id) + "\n")
-            log_action_webhook(admincommandshook, f"<@{ctx.author.id}> Whitelisted <@{user.id}>", "Admin")
-            await ctx.send(embed=discord.Embed(title="Success", description=f"Whitelisted {user.name}", color=0xba67f6))
-        else:
-            await ctx.send("User is already whitelisted.")
-
-@bot.command()
-async def unwhitelist(ctx, user: discord.Member = None):
-    if ctx.author.id != OWNER_ID: return
-    if not user: return await ctx.send("Please mention a user.")
-
-    if os.path.exists("assets/whitelist.txt"):
-        with open("assets/whitelist.txt", "r") as f:
-            lines = f.readlines()
-        with open("assets/whitelist.txt", "w") as f:
-            for line in lines:
-                if line.strip() != str(user.id):
-                    f.write(line)
-        await ctx.send(embed=discord.Embed(title="Success", description=f"Removed {user.name}", color=0xba67f6))
-
-@bot.command()
-async def get_log_file(ctx):
-    if not await Utils.isWhitelisted(ctx): return
-    if os.path.exists("assets/logs.txt"):
-        await ctx.send(file=discord.File("assets/logs.txt"))
-    else:
-        await ctx.send("Log file not found.")
-
-# --- 5. GENERATOR COMMANDS ---
-
-@bot.command()
-@commands.cooldown(1, free_gen_cooldown, commands.BucketType.user)
-async def gen(ctx, service: str = None):
-    if ctx.channel.id != free_gen_channel_id: return
-    if not service: return await ctx.send("Usage: `F.gen [service]`")
+    # VIP Check
+    if ctx.prefix == "V.":
+        role = ctx.guild.get_role(premium_gen_role)
+        if role not in ctx.author.roles:
+            return await ctx.send(embed=discord.Embed(title="VIP Required", description="Price: $5 or 200 Ruby", color=0xf43f5e))
     
-    role = ctx.guild.get_role(free_gen_role)
-    if role not in ctx.author.roles:
-        return await ctx.send("You don't have permission (Missing status).")
+    # Booster Check
+    elif ctx.prefix == "B.":
+        role = ctx.guild.get_role(boost_gen_role)
+        if role not in ctx.author.roles: return await ctx.send("Booster role required!")
+    
+    # Free Check
+    elif ctx.prefix == "F.":
+        if ctx.channel.id != free_gen_channel_id: return
+        role = ctx.guild.get_role(free_gen_role)
+        if role not in ctx.author.roles: return await ctx.send("Status required!")
 
     ticket = generate_ticket()
-    log_action_webhook(freegenhook, f"<@{ctx.author.id}> generated {service}", "Free Gen")
-    
-    embed = discord.Embed(title="Ticket Generated", description=f"**Service:** {service}\n**Code:** `{ticket}`", color=0xfa0ad6)
+    save_ticket(ticket, service)
     try:
-        await ctx.author.send(embed=embed)
-        await ctx.send("Ticket sent to DMs!")
+        await ctx.author.send(f"🎟️ Your **{service}** ticket: `{ticket}`\nRedeem with `F.redeem {ticket}`")
+        await ctx.send("✅ Ticket sent to DMs!")
     except:
-        await ctx.send("Please open your DMs!")
+        await ctx.send("❌ Open your DMs!")
 
-@bot.command()
-@commands.cooldown(1, boost_gen_cooldown, commands.BucketType.user)
-async def bgen(ctx, service: str = None):
-    if ctx.channel.id != boost_gen_channel_id: return
-    if not service: return await ctx.send("Usage: `B.[service]`")
+# F.redeem
+@bot.command(name="redeem")
+async def redeem(ctx, code: str):
+    if ctx.prefix != "F.": return
     
-    role = ctx.guild.get_role(boost_gen_role)
-    if role not in ctx.author.roles:
-        return await ctx.send("You don't have Booster role.")
-    
+    found = False
+    service_name = None
+    lines = []
+
+    if os.path.exists("assets/tickets.txt"):
+        with open("assets/tickets.txt", "r") as f:
+            lines = f.readlines()
+        
+        with open("assets/tickets.txt", "w") as f:
+            for line in lines:
+                if line.startswith(code) and not found:
+                    service_name = line.split(":")[1].strip()
+                    found = True
+                else:
+                    f.write(line)
+                    
+    if found:
+        # Use premium folder as default for stock search
+        stock_file = Path(f"Premium_gen/{service_name}.txt")
+        if stock_file.exists():
+            with open(stock_file, "r") as f:
+                accounts = [l for l in f.readlines() if l.strip()]
+            if accounts:
+                acc = random.choice(accounts).strip()
+                remaining = [a for a in accounts if a.strip() != acc]
+                with open(stock_file, "w") as f:
+                    f.writelines(remaining)
+                await ctx.author.send(f"🎁 Reward: `{acc}`")
+                return await ctx.send("✅ Redeemed in DMs!")
+        await ctx.send("❌ Valid ticket, but out of stock!")
+    else:
+        await ctx.send("❌ Invalid ticket.")
+
+# Slash Command: Set Ticket
+@bot.slash_command(name="setticket", description="Manually create a ticket", guild_ids=[GUILD_ID])
+async def setticket(ctx, service: str):
+    if not await Utils.isWhitelisted(ctx): return await ctx.respond("Unauthorized.")
     ticket = generate_ticket()
-    log_action_webhook(boostgenhook, f"<@{ctx.author.id}> generated {service}", "Booster Gen")
-    await ctx.author.send(f"Booster Ticket: `{ticket}`")
-    await ctx.send("Booster ticket sent to DMs!")
+    save_ticket(ticket, service)
+    await ctx.respond(f"✅ Ticket for {service}: `{ticket}`", ephemeral=True)
 
-@bot.command()
-@commands.cooldown(1, premium_gen_cooldown, commands.BucketType.user)
-async def vgen(ctx, service: str = None):
-    if ctx.channel.id != premium_gen_channel_id: return
-    if not service: return await ctx.send("Usage: `V.[service]`")
-    
-    role = ctx.guild.get_role(premium_gen_role)
-    if not role or role not in ctx.author.roles:
-        return await ctx.send("Buy VIP to use this command!")
-    
-    ticket = generate_ticket()
-    log_action_webhook(premiumgenhook, f"<@{ctx.author.id}> generated {service}", "VIP Gen")
-    await ctx.author.send(f"VIP Ticket: `{ticket}`")
-    await ctx.send("VIP ticket sent to DMs!")
-
-# Error Handler
-@gen.error
-@bgen.error
-@vgen.error
+# Cooldown Handler
+@combined_gen.error
 async def gen_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send(embed=discord.Embed(title="Cooldown", description=f"Wait {round(error.retry_after, 2)}s.", color=0xf667c6))
+        await ctx.send(f"⏳ Wait {round(error.retry_after, 2)}s.")
 
-# --- 6. RUN ---
 if TOKEN:
     bot.run(TOKEN)
