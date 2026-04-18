@@ -1,0 +1,138 @@
+[2026-03-31 20:16:01.418013] mct_mc used /stock 
+[2026-03-31 20:16:06.142841] overtopzz1231 generated nexus from free Gen 
+[2026-03-31 20:16:14.433284] overtopzz1231 used /stock 
+[2026-03-31 20:18:35.273795] its_vihaan111 used /stock 
+[2026-03-31 20:21:21.328386] its_vihaan111 generated crunchyroll from free Gen 
+[2026-03-31 20:22:18.399869] pro_gameryt490 used /stock 
+[2026-03-31 20:23:04.138362] pro_gameryt490 Used /premium_stock 
+[2026-03-31 20:24:22.494026] pro_gameryt490 generated Xbox from free Gen 
+[2026-03-31 20:27:17.976023] pro_gameryt490 Generated crunchyroll in premium Gen 
+[2026-03-31 20:28:42.685675] mct_mc generated cruhyroll from free Gen 
+[2026-03-31 20:29:51.213479] mct_mc Added cruhyroll in Free_gen 
+[2026-03-31 20:30:56.050266] mct_mc Added steams in Free_gen 
+[2026-03-31 20:36:55.377763] idkletmebe_0 used /stock 
+[2026-03-31 20:37:22.399987] idkletmebe_0 used /stock 
+[2026-03-31 20:44:34.940572] 6b_1 used /stock 
+[2026-03-31 20:45:09.956406] 6b_1 generated crunchyroll from free Gen 
+[2026-03-31 21:00:49.345466] mct_mc used /stock 
+[2026-03-31 21:01:20.149884] mct_mc Removed crunchyroll from free Gen 
+[2026-03-31 21:13:22.885969] vtan0399 used /stock 
+[2026-03-31 21:15:47.391907] mct_mc Whitelisted pro_gameryt490 
+[2026-03-31 21:16:17.910085] mct_mc Whitelisted vtan0399 
+[2026-03-31 21:30:35.294132] maxstriker002 used /stock 
+[2026-03-31 21:54:37.613982] vtan0399 used /stock 
+[2026-03-31 21:55:54.966176] vtan0399 Used /booster_stock 
+[2026-03-31 22:02:25.035046] maxstriker002 generated steams from free Gen 
+[2026-03-31 22:58:39.124288] pro_gameryt490 Generated Crunchyroll in premium Gen 
+[2026-03-31 23:00:31.296449] mct_mc Used /premium_stock 
+[2026-03-31 23:00:47.579243] mct_mc Generated microsoft in premium Gen 
+[2026-03-31 23:01:32.301917] pro_gameryt490 used /stock 
+[2026-03-31 23:03:08.138632] pro_gameryt490 generated steams from free Gen 
+[2026-03-31 23:04:52.189482] mct_mc Used /premium_stock 
+[2026-03-31 23:05:12.599483] mct_mc Used /booster_stock 
+[2026-03-31 23:07:16.658015] pro_gameryt490 Used /premium_stock 
+[2026-03-31 23:07:52.517777] pro_gameryt490 used /stock 
+[2026-03-31 23:57:36.059004] anubhavapex generated crunchyroll from free Gen 
+[2026-04-01 00:07:09.754634] vtan0399 generated steams from free Gen 
+[2026-04-01 01:16:35.363619] busy_parrot_1629563563 Used /premium_stock 
+[2026-04-01 01:18:08.045868] busy_parrot_1629563563 Used /booster_stock 
+[2026-04-01 09:15:23.277591] pro_gameryt490 generated steams from free Gen 
+[2026-04-01 09:41:01.192270] babar9290 generated steam from free Gen 
+[2026-04-01 09:59:12.575325] babar9290 generated steams from free Gen 
+[2026-04-01 16:45:40.455845] progamer_0_1 used /stock 
+[2026-04-01 17:48:51.948741] progamer_0_1 generated streams 
+/Stock from free Gen 
+[2026-04-01 18:42:18.344933] progamer_0_1 generated steams from free Gen 
+[2026-04-01 18:59:11.228795] vtan0399 Restocked minecraft_unchecked in premium Gen 
+[2026-04-01 19:00:00.139401] vtan0399 Used /premium_stock 
+[2026-04-01 19:00:17.887165] vtan0399 used /stock 
+[2026-04-01 19:01:20.684036] vtan0399 Restocked mc_unchecked in free Gen 
+[2026-04-01 19:02:18.323260] vtan0399 Restocked xbox_unchecked in free Gen 
+[2026-04-01 19:06:30.937698] progamer_0_1 generated steams from free Gen 
+[2026-04-01 19:08:58.914810] progamer_0_1 used /stock 
+[2026-04-01 19:09:00.885402] progamer_0_1 used /stock 
+[2026-04-01 19:21:57.822513] progamer_0_1 generated steams from free Gen 
+[2026-04-01 19:28:15.580645] maxstriker002 used /stock 
+[2026-04-01 19:41:52.008429] maxstriker002 used /stock 
+[2026-04-01 20:09:51.480657] anubhavapex used /stock 
+[2026-04-01 20:59:15.969648] progamer_0_1 generated steams from free Gen 
+[2026-04-01 21:07:51.338298] anubhavapex Used /premium_stock 
+[2026-04-01 21:28:01.648494] progamer_0_1 generated steams from free Gen 
+[2026-04-01 21:28:28.908649] progamer_0_1 used /stock 
+[2026-04-01 23:16:32.359591] vtan0399 generated steams from free Gen 
+[2026-04-01 23:30:03.390751] progamer_0_1 generated steams from free Gen 
+[2026-04-02 00:17:29.815782] progamer_0_1 generated steams from free Gen 
+[2026-04-02 05:54:00.177848] maxstriker002 used /stock 
+[2026-04-02 16:53:52.103240] progamer_0_1 generated steams from free Gen 
+[2026-04-02 16:59:32.511737] progamer_0_1 used /stock 
+[2026-04-02 16:59:58.663226] progamer_0_1 generated steams from free Gen 
+[2026-04-02 17:25:10.463285] progamer_0_1 generated xbox from free Gen 
+[2026-04-02 17:37:39.887059] vtan0399 Used /booster_stock 
+[2026-04-05 14:22:55.018331] its_vihaan111 generated mc_unchecked from free Gen 
+[2026-04-05 14:25:51.243749] vtan0399 used /stock 
+[2026-04-05 14:29:04.681492] deputy32 used /stock 
+[2026-04-05 14:29:22.703575] deputy32 generated steams from free Gen 
+[2026-04-05 14:32:38.882331] vtan0399 Used /booster_stock 
+[2026-04-05 14:35:23.149403] its_vihaan111 used /stock 
+[2026-04-05 14:37:36.286990] anubhavapex used /stock 
+[2026-04-05 14:40:39.402287] youtuberwholovescreating generated xbox from free Gen 
+[2026-04-05 14:40:44.639016] vtan0399 generated mc_unchecked from free Gen 
+[2026-04-05 14:55:18.271675] progamer_0_1 generated steams from free Gen 
+[2026-04-05 14:57:22.097584] idkletmebe_0 used /stock 
+[2026-04-05 14:58:07.987236] mct_mc used /stock 
+[2026-04-05 14:58:31.714810] mct_mc generated steams from free Gen 
+[2026-04-05 15:26:26.165819] vtan0399 Used /premium_stock 
+[2026-04-05 15:40:36.740026] youtuberwholovescreating Generated Hotmail_hits in premium Gen 
+[2026-04-05 17:07:17.803965] pro_gameryt490 used /stock 
+[2026-04-05 17:07:52.995277] pro_gameryt490 Used /premium_stock 
+[2026-04-05 17:48:17.480728] mct_mc Used /premium_stock 
+[2026-04-05 19:28:07.906977] anubhavapex Used /premium_stock 
+[2026-04-05 19:28:35.515650] anubhavapex Used /booster_stock 
+[2026-04-05 19:28:55.648576] anubhavapex used /stock 
+[2026-04-05 22:16:37.118281] saftp12 used /stock 
+[2026-04-06 00:24:35.120209] ashleykate123 used /stock 
+[2026-04-06 00:59:46.360105] alisonburgers781 used /stock 
+[2026-04-06 01:02:21.921590] darkness_emp used /stock 
+[2026-04-06 01:08:00.969826] vtan0399 generated mc_unchecked from free Gen 
+[2026-04-06 03:15:49.051606] babar9290 generated mc_unchecked from free Gen 
+[2026-04-06 18:55:15.162442] k22a9m9t generated steams in booster Gen 
+[2026-04-06 19:35:05.453980] 123456789extra used /stock 
+[2026-04-06 19:35:56.704338] 123456789extra Used /premium_stock 
+[2026-04-07 00:08:51.550658] anubhavapex used /stock 
+[2026-04-07 00:32:31.908789] jadbakeer used /stock 
+[2026-04-07 00:32:39.759394] vtan0399 generated xbox from free Gen 
+[2026-04-07 00:32:46.190464] jadbakeer generated steams from free Gen 
+[2026-04-07 00:35:50.287098] saftp12 used /stock 
+[2026-04-07 02:30:19.781106] darkness_emp used /stock 
+[2026-04-07 02:52:22.702483] pro_gameryt490 used /stock 
+[2026-04-07 02:53:57.573795] pro_gameryt490 used /stock 
+[2026-04-07 02:54:23.839178] pro_gameryt490 Used /premium_stock 
+[2026-04-07 02:57:33.653086] pro_gameryt490 used /stock 
+[2026-04-07 02:58:57.560591] pro_gameryt490 generated mc_unchecked from free Gen 
+[2026-04-07 03:03:59.132832] jadbakeer generated steams from free Gen 
+[2026-04-07 03:11:58.582020] jadbakeer generated steams from free Gen 
+[2026-04-07 03:24:36.232187] jadbakeer generated steams from free Gen 
+[2026-04-07 03:49:33.957495] jadbakeer generated mc_unchecked from free Gen 
+[2026-04-07 03:53:45.241709] jadbakeer used /stock 
+[2026-04-07 03:53:46.111737] jadbakeer used /stock 
+[2026-04-07 03:59:26.736540] jadbakeer generated mc_unchecked from free Gen 
+[2026-04-08 21:31:18.676394] overtopzz1231 generated Mcfa from free Gen 
+[2026-04-08 21:31:44.655584] bloxrants_uncut used /stock 
+[2026-04-08 21:32:08.184362] bloxrants_uncut generated mc_unchecked from free Gen 
+[2026-04-08 21:38:11.290044] its_vihaan111 used /stock 
+[2026-04-08 21:38:25.957979] its_vihaan111 generated mc_unchecked from free Gen 
+[2026-04-08 21:39:04.640586] bloxrants_uncut generated xbox from free Gen 
+[2026-04-08 21:45:41.023941] bloxrants_uncut generated steams from free Gen 
+[2026-04-08 22:11:25.181586] illegal_is_back_76021 used /stock 
+[2026-04-08 22:13:20.617427] illegal_is_back_76021 Used /premium_stock 
+[2026-04-08 22:23:09.606282] bloxrants_uncut generated mc_unchecked from free Gen 
+[2026-04-08 22:28:01.999469] darkness_emp generated mc_unchecked from free Gen 
+[2026-04-08 23:33:58.184998] saftp12 used /stock 
+[2026-04-08 23:34:04.467506] saftp12 used /stock 
+[2026-04-08 23:35:08.872119] darkness_emp used /stock 
+[2026-04-09 02:20:04.791110] krafty0410 used /stock 
+[2026-04-09 11:52:44.514423] not_ruhii generated steam from free Gen 
+[2026-04-09 12:45:03.334887] not_ruhii generated steams from free Gen 
+[2026-04-09 17:36:01.987797] anubhavapex used /stock 
+[2026-04-09 19:20:18.543309] imhenryinthechampionsleague used /stock 
+[2026-04-09 19:59:44.046422] bloxrants_uncut generated mc_unchecked from free Gen 

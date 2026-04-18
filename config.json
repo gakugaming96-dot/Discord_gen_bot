@@ -1,0 +1,28 @@
+{
+    "bot_status": "best gen server .gg/V7gG8nVYtb",
+    "owner_id": 1456505356837589077,
+    "server_id": 1492800991769395331,
+    "free_gen": {
+        "free_gen_role": 1495118035768315974,
+        "free_gen_channel": 1495000747471929435,
+        "free_gen_status": "best gen server .gg/V7gG8nVYtb",
+        "status_log_channel": 1495119477983940809,
+        "free_gen_cooldown": 360
+    },
+    "boost_gen": {
+        "boost_gen_role": 1484287275377627338, 
+        "boost_gen_channel": 1488502132482117632,
+        "boost_gen_cooldown": 120
+    },
+    "premium_gen": {
+        "premium_gen_role": 1495089091652358196,
+        "premium_gen_channel": 1495001084509425844,
+        "premium_gen_cooldown": 240
+    },
+    "logs": {
+        "free_gen_log_webhook": "https://discord.com/api/webhooks/1488511484735524954/xw6t7KOsbcTfkAjTZJ_7KF87a26sPX7ehw5rOXwepqKU2GDmfGeUfn8-7KDNAqc5V98o",
+        "booster_gen_log_webhook": "https://discord.com/api/webhooks/1488511484735524954/xw6t7KOsbcTfkAjTZJ_7KF87a26sPX7ehw5rOXwepqKU2GDmfGeUfn8-7KDNAqc5V98o",
+        "premium_gen_log_webhook": "https://discord.com/api/webhooks/1488511484735524954/xw6t7KOsbcTfkAjTZJ_7KF87a26sPX7ehw5rOXwepqKU2GDmfGeUfn8-7KDNAqc5V98o",
+        "admin_commands_log_webhook": "https://discord.com/api/webhooks/1488511484735524954/xw6t7KOsbcTfkAjTZJ_7KF87a26sPX7ehw5rOXwepqKU2GDmfGeUfn8-7KDNAqc5V98o"
+    }
+}

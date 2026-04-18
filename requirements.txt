@@ -1,0 +1,6 @@
+py-cord
+pycord
+requests
+colorama
+discord.py
+pathlib
