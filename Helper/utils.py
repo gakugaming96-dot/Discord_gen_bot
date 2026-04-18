@@ -10,7 +10,7 @@ from discord.ext import commands
 
 # --- 1. LOAD CONFIG & VARIABLES ---
 try:
-    with open("Config.json", "r", encoding="utf-8") as f:
+    with open("c=onfig.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 except FileNotFoundError:
     config = {}

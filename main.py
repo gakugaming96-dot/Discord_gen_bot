@@ -10,7 +10,7 @@ from colorama import Fore
 from Helper import *
 
 # --- 1. LOAD CONFIGURATION ---
-with open('Config.json', 'r') as f:
+with open('config.json', 'r') as f:
     config = json.load(f)
 
 # Environment Variables (For Railway Security)
