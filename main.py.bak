@@ -1,0 +1,211 @@
+import discord
+from discord.ext import commands
+import random
+import string
+import os
+import sys
+import json
+from pathlib import Path
+from colorama import Fore
+from Helper import *
+
+# --- 1. LOAD CONFIGURATION ---
+try:
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+except FileNotFoundError:
+    print("Error: config.json not found!")
+    sys.exit()
+
+# Environment Variables & Config setup
+TOKEN = os.getenv("BOT_TOKEN") or config.get("token")
+OWNER_ID = int(os.getenv("OWNER_ID", config.get("owner_id", 0)))
+GUILD_ID = int(os.getenv("SERVER_ID", config.get("server_id", 0)))
+
+# Folders and Data
+status = config.get("bot_status", "Nexus Tools")
+free_gen_role = config["free_gen"]["free_gen_role"]
+free_gen_channel_id = config["free_gen"]["free_gen_channel"]
+free_gen_cooldown = config["free_gen"]["free_gen_cooldown"]
+free_gen_status = config["free_gen"]["free_gen_status"]
+status_logs = config["free_gen"]["status_log_channel"]
+
+boost_gen_role = config["boost_gen"]["boost_gen_role"]
+boost_gen_channel_id = config["boost_gen"]["boost_gen_channel"]
+boost_gen_cooldown = config["boost_gen"]["boost_gen_cooldown"]
+
+premium_gen_role = config["premium_gen"]["premium_gen_role"]
+premium_gen_channel_id = config["premium_gen"]["premium_gen_channel"]
+premium_gen_cooldown = config["premium_gen"]["premium_gen_cooldown"]
+
+admincommandshook = config["logs"]["admin_commands_log_webhook"]
+
+# --- 2. BOT SETUP ---
+activity = discord.Activity(type=discord.ActivityType.playing, name=status)
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
+intents.message_content = True 
+
+# Using discord.Bot for Slash Command support with Prefix fallback
+bot = commands.Bot(
+    command_prefix=["F.", "B.", "V.", "D.", "C.", "M."], 
+    activity=activity, 
+    status=discord.Status.online, 
+    intents=intents,
+    help_command=None
+)
+
+# Clean up stock files on boot
+for folder in folder_list:
+    stock = gen_get_stock(folder)
+    for service in stock:
+        remove_empty(f"{folder}/{service}")
+
+# --- 3. HELPERS ---
+def generate_ticket():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=9))
+
+def save_ticket(ticket_code, service):
+    Path("assets").mkdir(exist_ok=True)
+    with open("assets/tickets.txt", "a") as f:
+        f.write(f"{ticket_code}:{service}\n")
+
+# --- 4. EVENTS ---
+@bot.event
+async def on_ready():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(f'''{Fore.LIGHTMAGENTA_EX}
+███╗ ██╗███████╗██╗ ██╗██╗ ██╗███████╗ ████████╗ ██████╗ ██████╗ ██╗ ███████╗
+████╗ ██║██╔════╝╚██╗██╔╝██║ ██║██╔════╝ ╚══██╔══╝██╔═══██╗██╔═══██╗██║ ██╔════╝
+██╔██╗ ██║█████╗ ╚███╔╝ ██║ ██║███████╗█████╗██║ ██║ ██║██║ ██║██║ ███████╗
+██║╚██╗██║██╔══╝ ██╔██╗ ██║ ██║╚════██║╚════╝██║ ██║ ██║██║ ██║██║ ╚════██║
+██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║ ██║ ╚██████╔╝╚██████╔╝███████╗███████║
+╚═╝ ╚═══╝╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚══════╝ ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
+    ''')
+    print(f'Logged in as {bot.user}')
+    
+    # Send instructions to channels
+    embed_configs = [
+        (free_gen_channel_id, "Free gen", "/gen [service]", free_gen_cooldown),
+        (boost_gen_channel_id, "Booster gen", "/booster_gen [service]", boost_gen_cooldown),
+        (premium_gen_channel_id, "Premium gen", "/premium_gen [service]", premium_gen_cooldown)
+    ]
+
+    for ch_id, title, cmd, cd in embed_configs:
+        ch = bot.get_channel(ch_id)
+        if ch:
+            try: await ch.purge(limit=10)
+            except: pass
+            embed = discord.Embed(title=f"How to use {title}:", color=0xf43f5e)
+            embed.description = f"**Commands:**\n`{cmd}`\n`/stock`\n\n**Cooldown:**\n{cd} seconds.\n\nTicket system active. Redeem with `F.redeem [code]`"
+            embed.set_footer(text="Nexus Tools - Automated Distribution")
+            await ch.send(embed=embed)
+
+@bot.event
+async def on_presence_update(before, after):
+    if after.bot or not after.guild: return
+    role = after.guild.get_role(free_gen_role)
+    channel = bot.get_channel(status_logs)
+    if not role: return
+
+    has_status = any(isinstance(a, discord.CustomActivity) and str(a) == free_gen_status for a in after.activities)
+    
+    if has_status:
+        await after.add_roles(role)
+        if channel:
+            await channel.send(embed=discord.Embed(title="Status Added", description=f"{after.mention} is now supporting!", color=discord.Color.green()))
+    else:
+        await after.remove_roles(role)
+        if channel:
+            await channel.send(embed=discord.Embed(title="Status Removed", description=f"{after.mention} stopped supporting.", color=discord.Color.red()))
+
+# --- 5. SLASH COMMANDS (Primary) ---
+
+@bot.slash_command(name="setticket", description="Manually create a ticket for a service", guild_ids=[GUILD_ID])
+async def setticket(ctx, service: str):
+    if not await Utils.isWhitelisted(ctx): return await ctx.respond("Unauthorized.", ephemeral=True)
+    ticket = generate_ticket()
+    save_ticket(ticket, service)
+    await ctx.respond(f"✅ Ticket for **{service}**: `{ticket}`", ephemeral=True)
+
+@bot.slash_command(name="whitelist", description="Whitelist a user.", guild_ids=[GUILD_ID])
+async def whitelist(ctx, user: discord.Option(discord.Member, "Member to whitelist", required=True)):
+    if ctx.author.id != OWNER_ID: return await ctx.respond("Owner only.", ephemeral=True)
+    with open("assets/whitelist.txt", "a") as f:
+        f.write(str(user.id) + "\n")
+    await ctx.respond(f"Successfully Whitelisted {user.mention}", ephemeral=True)
+
+@bot.slash_command(name="gen", description="Gens From Free Stock.", guild_ids=[GUILD_ID])
+@commands.cooldown(1, free_gen_cooldown, commands.BucketType.user)
+async def gen(ctx, service: discord.Option(str, autocomplete=discord.utils.basic_autocomplete(get_free_service_options))):
+    if ctx.channel.id != free_gen_channel_id: return await ctx.respond("Wrong channel.", ephemeral=True)
+    role = ctx.guild.get_role(free_gen_role)
+    if role not in ctx.author.roles: return await ctx.respond("Status required!", ephemeral=True)
+
+    file_path = f"{free_gen_folder}/{service}.txt"
+    if not os.path.exists(file_path): return await ctx.respond("Service not found.", ephemeral=True)
+
+    with open(file_path, 'r', encoding="utf-8") as f:
+        lines = [l for l in f.readlines() if l.strip()]
+
+    if not lines: return await ctx.respond(f"{service} is out of stock!", ephemeral=True)
+
+    account = random.choice(lines).strip()
+    remaining = [l for l in lines if l.strip() != account]
+
+    with open(file_path, 'w', encoding="utf-8") as f:
+        f.writelines(remaining)
+
+    try:
+        await ctx.author.send(embed=discord.Embed(title="Account Generated", description=f"**Service:** {service}\n**Account:** `{account}`", color=0xba67f6))
+        await ctx.respond("✅ Sent to DMs!", ephemeral=True)
+    except:
+        await ctx.respond("❌ Open your DMs!", ephemeral=True)
+
+# --- 6. PREFIX COMMANDS (Utility & Redemption) ---
+
+@bot.command(name="redeem")
+async def redeem(ctx, code: str):
+    if ctx.prefix != "F.": return
+    found = False
+    service_name = None
+    lines = []
+
+    if os.path.exists("assets/tickets.txt"):
+        with open("assets/tickets.txt", "r") as f:
+            lines = f.readlines()
+        
+        with open("assets/tickets.txt", "w") as f:
+            for line in lines:
+                if line.startswith(code) and not found:
+                    service_name = line.split(":")[1].strip()
+                    found = True
+                else:
+                    f.write(line)
+                    
+    if found:
+        stock_file = Path(f"Premium_gen/{service_name}.txt")
+        if stock_file.exists():
+            with open(stock_file, "r") as f:
+                accounts = [l for l in f.readlines() if l.strip()]
+            if accounts:
+                acc = random.choice(accounts).strip()
+                remaining = [a for a in accounts if a.strip() != acc]
+                with open(stock_file, "w") as f:
+                    f.writelines(remaining)
+                await ctx.author.send(f"🎁 Reward: `{acc}`")
+                return await ctx.send("✅ Redeemed in DMs!")
+        await ctx.send("❌ Out of stock!")
+    else:
+        await ctx.send("❌ Invalid ticket.")
+
+@bot.command(name="restart")
+async def restart(ctx):
+    if ctx.prefix == "D." and ctx.author.id == OWNER_ID:
+        await ctx.send("♻️ Restarting...")
+        os.execv(sys.executable, ['python'] + sys.argv)
+
+# --- 7. RUN ---
+if TOKEN:
+    bot.run(TOKEN)
