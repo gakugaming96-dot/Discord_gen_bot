@@ -149,6 +149,22 @@ bot = commands.Bot(
 )
 
 # ========================= NEW HELP COMMANDS =========================
+
+async def handle_status(request):
+    return web.json_response({"status": "online", "bot_id": str(bot.user.id) if bot.user else "starting"})
+
+async def web_server():
+    app = web.Application()
+    app.router.add_get('/status', handle_status)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    
+    # Railway provides the port dynamically
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"✅ Web server started on port {port}")
+
 @bot.command(name="mhelp")
 async def member_help(ctx):
     embed = discord.Embed(

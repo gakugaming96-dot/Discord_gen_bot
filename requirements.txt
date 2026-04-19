@@ -1,6 +1,6 @@
 py-cord
 requests
-coloram
+colorama
 discord.py==2.3.2
 supabase==2.3.4
 aiohttp==3.9.3
