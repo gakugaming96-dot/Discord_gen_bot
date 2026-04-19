@@ -3,5 +3,3 @@ requests==2.32.3
 colorama==0.4.6
 supabase==2.3.4
 aiohttp==3.9.3
-multidict==6.0.5
-yarl==1.9.4

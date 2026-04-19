@@ -1,5 +1,0 @@
-py-cord
-requests
-colorama
-supabase==2.3.4
-aiohttp==3.9.3
